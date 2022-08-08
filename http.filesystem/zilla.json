@@ -1,14 +1,10 @@
 {
     "name": "example",
-    "vaults":
-    {
-        "server":
-        {
+    "vaults": {
+        "server": {
             "type": "filesystem",
-            "options":
-            {
-                "keys":
-                {
+            "options": {
+                "keys": {
                     "store": "localhost.p12",
                     "type": "pkcs12",
                     "password": "generated"
@@ -16,62 +12,57 @@
             }
         }
     },
-    "bindings":
-    {
-        "tcp_server0":
-        {
-            "type" : "tcp",
+    "bindings": {
+        "tcp_server0": {
+            "type": "tcp",
             "kind": "server",
-            "options":
-            {
+            "options": {
                 "host": "0.0.0.0",
                 "port": 9090
             },
             "exit": "tls_server0"
         },
-        "tcp_server1":
-        {
-            "type" : "tcp",
+        "tcp_server1": {
+            "type": "tcp",
             "kind": "server",
-            "options":
-            {
+            "options": {
                 "host": "0.0.0.0",
                 "port": 8080
             },
             "exit": "http_server0"
         },
-        "tls_server0":
-        {
-            "type" : "tls",
+        "tls_server0": {
+            "type": "tls",
             "kind": "server",
             "vault": "server",
-            "options":
-            {
-                "keys": [ "localhost" ],
-                "sni": [ "localhost" ],
-                "alpn": [ "http/1.1", "h2" ]
+            "options": {
+                "keys": [
+                    "localhost"
+                ],
+                "sni": [
+                    "localhost"
+                ],
+                "alpn": [
+                    "http/1.1",
+                    "h2"
+                ]
             },
             "exit": "http_server0"
         },
-        "http_server0":
-        {
-            "type" : "http",
+        "http_server0": {
+            "type": "http",
             "kind": "server",
-            "routes":
-            [
+            "routes": [
                 {
-                    "when":
-                    [
+                    "when": [
                         {
-                            "headers":
-                            {
+                            "headers": {
                                 ":scheme": "http",
                                 ":authority": "localhost:8080"
                             }
                         },
                         {
-                            "headers":
-                            {
+                            "headers": {
                                 ":scheme": "https",
                                 ":authority": "localhost:9090"
                             }
@@ -81,35 +72,42 @@
                 }
             ]
         },
-        "http_filesystem_proxy0":
-        {
-            "type" : "http-filesystem",
+        "http_filesystem_proxy0": {
+            "type": "http-filesystem",
             "kind": "proxy",
-            "routes":
-            [
+            "routes": [
                 {
-                    "when":
-                    [
+                    "when": [
+                        {
+                            "path": "/"
+                        }
+                    ],
+                    "exit": "filesystem_server0",
+                    "with": {
+                        "path": "index.html"
+                    }
+                },
+                {
+                    "when": [
                         {
                             "path": "/{path}"
                         }
                     ],
                     "exit": "filesystem_server0",
-                    "with":
-                    {
+                    "with": {
                         "path": "${params.path}"
                     }
                 }
             ]
         },
-        "filesystem_server0":
-        {
-            "type" : "filesystem",
+        "filesystem_server0": {
+            "type": "filesystem",
             "kind": "server",
-            "options":
-            {
+            "options": {
                 "location": "web/"
             }
         }
     }
 }
+
+
